@@ -1,0 +1,6 @@
+name: GTK
+output: "lib/src/generated/generated_bindings.dart"
+
+headers:
+  entry-points:
+    - "gtk/gtk/**.h"
