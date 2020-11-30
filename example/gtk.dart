@@ -3,18 +3,16 @@ import 'dart:ffi';
 import 'package:gtk/gtk.dart';
 
 void activate(Pointer<Void> application, Pointer<Void> userData) {
-  print(application);
   final window = gtkApplicationWindowNew(application);
   gtkWindowSetTitle(window, 'Dart GTK example');
   gtkWindowSetDefaultSize(window, 200, 200);
 
-  gtkWindowShowAll(window);
+  gtkWidgetShowAll(window);
 }
 
 int main(List<String> arguments) {
   initGtk();
   final app = gtkApplicationNew('dev.kleak.gtk_example', 0);
-  print(app);
   gSignalConnect(app, 'activate', Pointer.fromFunction<GSignalCallback>(activate), nullptr);
 
   final status = gApplicationRun(app);
