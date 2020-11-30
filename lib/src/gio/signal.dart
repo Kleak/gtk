@@ -3,15 +3,15 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:gtk/src/gtk.dart';
 
-typedef g_signal_connect_data_func = Void Function(
-    Pointer<Void>, Pointer<Utf8>, Pointer<NativeFunction>, Pointer<Void>, Pointer<Void> _, Int32 flags);
-typedef GSignalConnectData = void Function(
-    Pointer<Void>, Pointer<Utf8>, Pointer<NativeFunction>, Pointer<Void>, Pointer<Void> _, int flags);
+typedef g_signal_connect_data_func = Void Function(Pointer<Void>, Pointer<Utf8>, Pointer<NativeFunction>, Pointer<Void>,
+    Pointer<NativeFunction> destroyData, Int32 flags);
+typedef GSignalConnectData = void Function(Pointer<Void>, Pointer<Utf8>, Pointer<NativeFunction>, Pointer<Void>,
+    Pointer<NativeFunction> destroyData, int flags);
 
 void _gSignalConnectData(Pointer<Void> application, String name, Pointer<NativeFunction> callback, Pointer<Void> data,
-    Pointer<Void> _, int flags) {
+    Pointer<NativeFunction> destroyData, int flags) {
   final f = gtk.lookupFunction<g_signal_connect_data_func, GSignalConnectData>('g_signal_connect_data');
-  f(application, Utf8.toUtf8(name), callback, data, _, flags);
+  f(application, Utf8.toUtf8(name), callback, data, destroyData, flags);
 }
 
 typedef GCallback = Void Function();
