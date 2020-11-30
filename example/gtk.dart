@@ -1,70 +1,35 @@
 import 'dart:ffi';
 
 import 'package:gtk/gtk.dart';
+import 'package:gtk/src/gtk/enums.dart';
+
+void helloWorld(Pointer<Void> widget, Pointer<Void> data) {
+  print('Hello world');
+}
 
 void activate(Pointer<Void> application, Pointer<Void> userData) {
   final window = gtkApplicationWindowNew(application);
   gtkWindowSetTitle(window, 'Dart GTK example');
   gtkWindowSetDefaultSize(window, 200, 200);
 
+  final buttonBox = gtkButtonBoxNew(GtkOrientation.horizontal);
+  gtkContainerAdd(window, buttonBox);
+
+  final button = gtkButtonNewWithLabel('Hello world');
+  gSignalConnect(
+      button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(helloWorld), nullptr);
+  gSignalConnectSwapped(button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window);
+  gtkContainerAdd(buttonBox, button);
+
   gtkWidgetShowAll(window);
 }
 
 int main(List<String> arguments) {
   initGtk();
-  final app = gtkApplicationNew('dev.kleak.gtk_example', 0);
-  gSignalConnect(app, 'activate', Pointer.fromFunction<GSignalCallback>(activate), nullptr);
+  final app = gtkApplicationNew('dev.kleak.gtk_example', GApplicationFlags.flagsNone);
+  gSignalConnect(app, 'activate', Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(activate), nullptr);
 
   final status = gApplicationRun(app);
   gObjectUnref(app);
   return status;
 }
-
-/*
-#include <gtk/gtk.h>
-
-static void
-print_hello (GtkWidget *widget,
-             gpointer   data)
-{
-  g_print ("Hello World\n");
-}
-
-static void
-activate (GtkApplication *app,
-          gpointer        user_data)
-{
-  GtkWidget *window;
-  GtkWidget *button;
-  GtkWidget *button_box;
-
-  window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW (window), "Window");
-  gtk_window_set_default_size (GTK_WINDOW (window), 200, 200);
-
-  button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
-  gtk_container_add (GTK_CONTAINER (window), button_box);
-
-  button = gtk_button_new_with_label ("Hello World");
-  g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_window_close), window);
-  gtk_container_add (GTK_CONTAINER (button_box), button);
-
-  gtk_widget_show_all (window);
-}
-
-int
-main (int    argc,
-      char **argv)
-{
-  GtkApplication *app;
-  int status;
-
-  app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-  status = g_application_run (G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
-
-  return status;
-}
-*/

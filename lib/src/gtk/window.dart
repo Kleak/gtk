@@ -13,7 +13,7 @@ Pointer<Void> gtkApplicationWindowNew(Pointer<Void> application) {
 typedef gtk_window_set_title_func = Void Function(Pointer<Void>, Pointer<Utf8>);
 typedef GtkWindowSetTitle = void Function(Pointer<Void>, Pointer<Utf8>);
 
-void gtkWindowSetTitle(Pointer<void> window, String title) {
+void gtkWindowSetTitle(Pointer<Void> window, String title) {
   final f = gtk.lookupFunction<gtk_window_set_title_func, GtkWindowSetTitle>('gtk_window_set_title');
   f(window, Utf8.toUtf8(title));
 }
@@ -21,8 +21,16 @@ void gtkWindowSetTitle(Pointer<void> window, String title) {
 typedef gtk_window_set_default_size_func = Void Function(Pointer<Void>, Int32, Int32);
 typedef GtkWindowSetDefaultSize = void Function(Pointer<Void>, int, int);
 
-void gtkWindowSetDefaultSize(Pointer<void> window, int width, int height) {
+void gtkWindowSetDefaultSize(Pointer<Void> window, int width, int height) {
   final f =
       gtk.lookupFunction<gtk_window_set_default_size_func, GtkWindowSetDefaultSize>('gtk_window_set_default_size');
   f(window, width, height);
+}
+
+typedef gtk_window_close_func = Void Function(Pointer<Void>);
+typedef GtkWindowClose = void Function(Pointer<Void>);
+
+void gtkWindowClose(Pointer<Void> window) {
+  final f = gtk.lookupFunction<gtk_window_close_func, GtkWindowClose>('gtk_window_close');
+  f(window);
 }
