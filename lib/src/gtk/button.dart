@@ -7,10 +7,12 @@ import 'package:gtk/src/gtk.dart';
 import 'package:gtk/src/gtk/bin.dart';
 import 'package:gtk/src/gtk/widget.dart';
 
-typedef gtk_button_new_with_label_func = Pointer<Void> Function(Pointer<Utf8>);
-typedef GtkButtonNewWithLabel = Pointer<Void> Function(Pointer<Utf8>);
+class NativeGtkButton extends Struct {}
 
-Pointer<Void> gtkButtonNewWithLabel(String label) {
+typedef gtk_button_new_with_label_func = Pointer<NativeGtkButton> Function(Pointer<Utf8>);
+typedef GtkButtonNewWithLabel = Pointer<NativeGtkButton> Function(Pointer<Utf8>);
+
+Pointer<NativeGtkButton> gtkButtonNewWithLabel(String label) {
   final f = gtk.lookupFunction<gtk_button_new_with_label_func, GtkButtonNewWithLabel>('gtk_button_new_with_label');
   return f(Utf8.toUtf8(label));
 }
@@ -33,11 +35,11 @@ class GtkButtonClickedEvent {
 final _onClickedController = StreamController<GtkButtonClickedEvent>(sync: true);
 
 void _onButtonClicked(Pointer<Void> widget, Pointer<Void> data) {
-  _onClickedController.add(GtkButtonClickedEvent(GtkWidget.fromNative(widget), data));
+  _onClickedController.add(GtkButtonClickedEvent(GtkWidget.fromNative(widget.cast()), data));
 }
 
 class GtkButton extends GtkBin {
-  GtkButton.fromNative(Pointer<Void> nativePointer) : super.fromNative(nativePointer) {
+  GtkButton.fromNative(Pointer<NativeGtkButton> nativePointer) : super.fromNative(nativePointer.cast()) {
     gSignalConnect(nativePointer.cast(), 'clicked',
         Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(_onButtonClicked), nullptr);
   }
@@ -48,6 +50,6 @@ class GtkButton extends GtkBin {
       _onClickedController.stream.where((event) => event.widget.nativePointer.address == nativePointer.address);
 
   set label(String value) {
-    gtkButtonSetLabel(nativePointer, value);
+    gtkButtonSetLabel(nativePointer.cast(), value);
   }
 }

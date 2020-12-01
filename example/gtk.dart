@@ -13,10 +13,10 @@ void activate(Pointer<NativeGtkApplication> application, Pointer<Void> userData)
 
   final button = gtkButtonNewWithLabel('Hello world');
   gSignalConnect(
-      button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(helloWorld), nullptr);
+      button.cast(), 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(helloWorld), nullptr);
   gSignalConnectSwapped(
-      button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window.cast());
-  gtkContainerAdd(window.cast(), button);
+      button.cast(), 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window.cast());
+  gtkContainerAdd(window.cast(), button.cast());
 
   gtkWidgetShowAll(window.cast());
 }

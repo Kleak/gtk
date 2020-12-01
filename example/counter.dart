@@ -11,7 +11,7 @@ class CounterApp extends GtkApplication {
     onActivate.listen(_onActivate);
   }
 
-  void _onActivate(GtkApplicationActivateEvent event) {
+  void _onActivate(GtkApplicationEvent event) {
     CounterApplicationWindow(event.application);
   }
 
@@ -27,7 +27,15 @@ class CounterApplicationWindow extends GtkApplicationWindow {
   int count = 0;
 
   CounterApplicationWindow(GtkApplication application) : super.fromGtkApplication(application) {
-    title = 'Counter';
+    onDestroy.listen((event) {
+      print('we can clean things here');
+    });
+
+    final headerbar = GtkHeaderBar();
+    headerbar.showCloseButton = true;
+    headerbar.title = 'Counter app';
+    titleBar = headerbar;
+
     defaultSize = Size(200, 200);
 
     final button = GtkButton.withLabel('You have clicked $count');

@@ -16,39 +16,38 @@ Pointer<NativeGtkApplication> gtkApplicationNew(String applicationId, GApplicati
   return f(Utf8.toUtf8(applicationId), flags.value);
 }
 
-class GtkApplicationActivateEvent {
+class GtkApplicationEvent {
   final GtkApplication application;
   final Pointer<Void> userData;
 
-  const GtkApplicationActivateEvent(this.application, this.userData);
+  const GtkApplicationEvent(this.application, this.userData);
 }
 
-final _gtkApplicationOnActivateController = StreamController<GtkApplicationActivateEvent>(sync: true);
+final _gtkApplicationOnActivateController = StreamController<GtkApplicationEvent>(sync: true);
 
-void _onGtkApplicationOnActivate(Pointer<Void> application, Pointer<Void> userData) {
-  _gtkApplicationOnActivateController
-      .add(GtkApplicationActivateEvent(GtkApplication.fromNative(application), userData));
+void _onGtkApplicationActivate(Pointer<NativeGtkApplication> application, Pointer<Void> userData) {
+  _gtkApplicationOnActivateController.add(GtkApplicationEvent(GtkApplication.fromNative(application), userData));
 }
 
 class GtkApplication {
-  final Pointer<Void> nativePointer;
+  final Pointer<NativeGtkApplication> nativePointer;
 
   GtkApplication.fromNative(this.nativePointer);
 
   GtkApplication(String applicationId)
       : nativePointer = gtkApplicationNew(applicationId, GApplicationFlags.flagsNone).cast() {
     gSignalConnect(
-      nativePointer,
+      nativePointer.cast(),
       'activate',
-      Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(_onGtkApplicationOnActivate),
+      Pointer.fromFunction<Void Function(Pointer<NativeGtkApplication>, Pointer<Void>)>(_onGtkApplicationActivate),
       nullptr,
     );
   }
 
-  Stream<GtkApplicationActivateEvent> get onActivate => _gtkApplicationOnActivateController.stream
+  Stream<GtkApplicationEvent> get onActivate => _gtkApplicationOnActivateController.stream
       .where((event) => event.application.nativePointer.address == nativePointer.address);
 
-  int run() => gApplicationRun(nativePointer);
+  int run() => gApplicationRun(nativePointer.cast());
 
-  void destroy() => gObjectUnref(nativePointer);
+  void destroy() => gObjectUnref(nativePointer.cast());
 }

@@ -11,6 +11,7 @@ export 'src/gtk/application_window.dart';
 export 'src/gtk/widget.dart';
 export 'src/gtk/button_box.dart';
 export 'src/gtk/button.dart';
+export 'src/gtk/header_bar.dart';
 export 'src/gtk/container.dart';
 
 export 'src/init.dart';
