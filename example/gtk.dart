@@ -6,16 +6,17 @@ void helloWorld(Pointer<Void> widget, Pointer<Void> data) {
   print('Hello world');
 }
 
-void activate(Pointer<Void> application, Pointer<Void> userData) {
+void activate(Pointer<NativeGtkApplication> application, Pointer<Void> userData) {
   final window = gtkApplicationWindowNew(application);
-  gtkWindowSetTitle(window, 'Dart GTK example');
-  gtkWindowSetDefaultSize(window, 200, 200);
+  gtkWindowSetTitle(window.cast(), 'Dart GTK example');
+  gtkWindowSetDefaultSize(window.cast(), 200, 200);
 
   final button = gtkButtonNewWithLabel('Hello world');
   gSignalConnect(
       button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(helloWorld), nullptr);
-  gSignalConnectSwapped(button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window);
-  gtkContainerAdd(window, button);
+  gSignalConnectSwapped(
+      button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window.cast());
+  gtkContainerAdd(window.cast(), button);
 
   gtkWidgetShowAll(window);
 }
@@ -23,9 +24,10 @@ void activate(Pointer<Void> application, Pointer<Void> userData) {
 int main(List<String> arguments) {
   initGtk();
   final app = gtkApplicationNew('dev.kleak.gtk_example', GApplicationFlags.flagsNone);
-  gSignalConnect(app, 'activate', Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(activate), nullptr);
+  gSignalConnect(app.cast(), 'activate',
+      Pointer.fromFunction<Void Function(Pointer<NativeGtkApplication>, Pointer<Void>)>(activate), nullptr);
 
-  final status = gApplicationRun(app);
-  gObjectUnref(app);
+  final status = gApplicationRun(app.cast());
+  gObjectUnref(app.cast());
   return status;
 }

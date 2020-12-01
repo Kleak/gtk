@@ -8,10 +8,10 @@ import 'package:gtk/src/gtk.dart';
 
 class NativeGtkApplication extends Struct {}
 
-typedef gtk_application_new_func = Pointer<Void> Function(Pointer<Utf8>, Int32);
-typedef GtkApplicatNew = Pointer<Void> Function(Pointer<Utf8>, int);
+typedef gtk_application_new_func = Pointer<NativeGtkApplication> Function(Pointer<Utf8>, Int32);
+typedef GtkApplicatNew = Pointer<NativeGtkApplication> Function(Pointer<Utf8>, int);
 
-Pointer<Void> gtkApplicationNew(String applicationId, GApplicationFlags flags) {
+Pointer<NativeGtkApplication> gtkApplicationNew(String applicationId, GApplicationFlags flags) {
   final f = gtk.lookupFunction<gtk_application_new_func, GtkApplicatNew>('gtk_application_new');
   return f(Utf8.toUtf8(applicationId), flags.value);
 }
@@ -35,7 +35,8 @@ class GtkApplication {
 
   GtkApplication.fromNative(this.nativePointer);
 
-  GtkApplication(String applicationId) : nativePointer = gtkApplicationNew(applicationId, GApplicationFlags.flagsNone) {
+  GtkApplication(String applicationId)
+      : nativePointer = gtkApplicationNew(applicationId, GApplicationFlags.flagsNone).cast() {
     gSignalConnect(
       nativePointer,
       'activate',
