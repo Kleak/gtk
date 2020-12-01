@@ -1,14 +1,9 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:gtk/src/gtk.dart';
+import 'package:gtk/src/gtk/bin.dart';
 
-typedef gtk_application_window_new_func = Pointer<Void> Function(Pointer<Void>);
-typedef GtkApplicationWindowNew = Pointer<Void> Function(Pointer<Void>);
-
-Pointer<Void> gtkApplicationWindowNew(Pointer<Void> application) {
-  final f = gtk.lookupFunction<gtk_application_window_new_func, GtkApplicationWindowNew>('gtk_application_window_new');
-  return f(application);
-}
+class NativeGtkWindow extends Struct {}
 
 typedef gtk_window_set_title_func = Void Function(Pointer<Void>, Pointer<Utf8>);
 typedef GtkWindowSetTitle = void Function(Pointer<Void>, Pointer<Utf8>);
@@ -33,4 +28,23 @@ typedef GtkWindowClose = void Function(Pointer<Void>);
 void gtkWindowClose(Pointer<Void> window) {
   final f = gtk.lookupFunction<gtk_window_close_func, GtkWindowClose>('gtk_window_close');
   f(window);
+}
+
+class Size {
+  final int width;
+  final int height;
+
+  const Size(this.width, this.height);
+}
+
+class GtkWindow extends GtkBin {
+  GtkWindow.fromNative(Pointer<Void> nativePointer) : super.fromNative(nativePointer);
+
+  set title(String newTitle) {
+    gtkWindowSetTitle(nativePointer.cast(), newTitle);
+  }
+
+  set defaultSize(Size size) {
+    gtkWindowSetDefaultSize(nativePointer.cast(), size.width, size.height);
+  }
 }
