@@ -18,7 +18,7 @@ void activate(Pointer<NativeGtkApplication> application, Pointer<Void> userData)
       button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window.cast());
   gtkContainerAdd(window.cast(), button);
 
-  gtkWidgetShowAll(window);
+  gtkWidgetShowAll(window.cast());
 }
 
 int main(List<String> arguments) {
