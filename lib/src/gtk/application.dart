@@ -17,21 +17,17 @@ Pointer<Void> gtkApplicationNew(String applicationId, GApplicationFlags flags) {
 }
 
 class GtkApplicationActivateEvent {
-  final Pointer<Void> application;
+  final GtkApplication application;
   final Pointer<Void> userData;
 
   const GtkApplicationActivateEvent(this.application, this.userData);
 }
 
-final _gtkApplicationOnActivateController = StreamController<GtkApplicationActivateEvent>();
+final _gtkApplicationOnActivateController = StreamController<GtkApplicationActivateEvent>(sync: true);
 
 void _onGtkApplicationOnActivate(Pointer<Void> application, Pointer<Void> userData) {
-  final app = GtkApplication.fromNative(application);
-
-  final appWin = GtkApplicationWindow.fromGtkApplication(app);
-  appWin.show();
-
-  _gtkApplicationOnActivateController.add(GtkApplicationActivateEvent(application, userData));
+  _gtkApplicationOnActivateController
+      .add(GtkApplicationActivateEvent(GtkApplication.fromNative(application), userData));
 }
 
 class GtkApplication {
@@ -48,8 +44,8 @@ class GtkApplication {
     );
   }
 
-  Stream<GtkApplicationActivateEvent> get onActivate =>
-      _gtkApplicationOnActivateController.stream.where((event) => event.application.address == nativePointer.address);
+  Stream<GtkApplicationActivateEvent> get onActivate => _gtkApplicationOnActivateController.stream
+      .where((event) => event.application.nativePointer.address == nativePointer.address);
 
   int run() => gApplicationRun(nativePointer);
 

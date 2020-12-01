@@ -2,12 +2,8 @@ import 'dart:ffi';
 
 import 'package:gtk/gtk.dart';
 
-var count = 0;
-
-void helloWorld(Pointer<Void> button, Pointer<Void> data) {
-  print(data);
-  count++;
-  gtkButtonSetLabel(button, 'You have clicked $count');
+void helloWorld(Pointer<Void> widget, Pointer<Void> data) {
+  print('Hello world');
 }
 
 void activate(Pointer<Void> application, Pointer<Void> userData) {
@@ -15,10 +11,10 @@ void activate(Pointer<Void> application, Pointer<Void> userData) {
   gtkWindowSetTitle(window, 'Dart GTK example');
   gtkWindowSetDefaultSize(window, 200, 200);
 
-  final button = gtkButtonNewWithLabel('You have clicked $count');
+  final button = gtkButtonNewWithLabel('Hello world');
   gSignalConnect(
       button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>, Pointer<Void>)>(helloWorld), nullptr);
-  // gSignalConnectSwapped(button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window);
+  gSignalConnectSwapped(button, 'clicked', Pointer.fromFunction<Void Function(Pointer<Void>)>(gtkWindowClose), window);
   gtkContainerAdd(window, button);
 
   gtkWidgetShowAll(window);

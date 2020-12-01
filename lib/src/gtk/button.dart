@@ -30,7 +30,7 @@ class GtkButtonClickedEvent {
   const GtkButtonClickedEvent(this.widget, this.data);
 }
 
-final _onClickedController = StreamController<GtkButtonClickedEvent>();
+final _onClickedController = StreamController<GtkButtonClickedEvent>(sync: true);
 
 void _onButtonClicked(Pointer<Void> widget, Pointer<Void> data) {
   _onClickedController.add(GtkButtonClickedEvent(GtkWidget.fromNative(widget), data));
@@ -44,9 +44,8 @@ class GtkButton extends GtkBin {
 
   factory GtkButton.withLabel(String label) => GtkButton.fromNative(gtkButtonNewWithLabel(label));
 
-  Stream<GtkButtonClickedEvent> get onClicked => _onClickedController.stream
-      .where((event) => event.widget.nativePointer.address == nativePointer.address)
-      .map((event) => null);
+  Stream<GtkButtonClickedEvent> get onClicked =>
+      _onClickedController.stream.where((event) => event.widget.nativePointer.address == nativePointer.address);
 
   set label(String value) {
     gtkButtonSetLabel(nativePointer, value);

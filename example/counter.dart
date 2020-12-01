@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:gtk/gtk.dart';
-import 'package:gtk/src/gtk/application_window.dart';
 
 int main() {
   initGtk();
@@ -15,10 +12,7 @@ class CounterApp extends GtkApplication {
   }
 
   void _onActivate(GtkApplicationActivateEvent event) {
-    // final app = GtkApplication.fromNative(event.application);
-
-    // final appWin = GtkApplicationWindow.fromGtkApplication(app);
-    // appWin.show();
+    CounterApplicationWindow(event.application);
   }
 
   @override
